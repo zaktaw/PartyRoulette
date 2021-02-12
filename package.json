@@ -1,0 +1,25 @@
+{
+  "name": "partyroulette",
+  "version": "1.0.0",
+  "description": "PartyRoulette is a discord bot that automatically assigns users in a server to random voice channels.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zaktaw/PartyRoulette.git"
+  },
+  "keywords": [
+    "discord.js"
+  ],
+  "author": "Zakaria Karlsen Tawfiq",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/zaktaw/PartyRoulette/issues"
+  },
+  "homepage": "https://github.com/zaktaw/PartyRoulette#readme",
+  "dependencies": {
+    "discord.js": "^11.6.4"
+  }
+}
