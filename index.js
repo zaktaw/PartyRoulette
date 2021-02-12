@@ -1,6 +1,7 @@
 const Discord = require('discord.js');
+const config = require('./hiddenConfig.json');
+
 const bot = new Discord.Client();
-const config = require("./hiddenConfig.json");
 const PREFIX = 'pr ';
 
 bot.on('ready', () => {
@@ -31,8 +32,25 @@ bot.on('message', (msg) => {
             msg.channel.send("This bot is working");
             break;
 
+        case 'start' :
+            changeChannelsInterval = setInterval(() => changeChannels(msg), 5000);
+            break;
+
         default :
             msg.channel.send(`"${args[0]}" is an invalid command`);
 
     }   
 });
+
+function getMembers(msg) {
+    let members = msg.guild.members.filter(member => !member.user.bot && member.voiceChannel); // get all members in the server. Filter: ignore bots and members that aren't connected to a voice channel
+    return members;
+}
+
+function changeChannels(msg) {
+    console.log("Changing channels...")
+    members = getMembers(msg);
+    for (let [snowflake, guildMember] of members) {
+        guildMember.setVoiceChannel('809803149266255902');
+    }
+}
