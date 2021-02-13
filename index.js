@@ -1,9 +1,10 @@
 const Discord = require('discord.js');
 const config = require('./hiddenConfig.json');
-
 const bot = new Discord.Client();
+
 const PREFIX = 'pr ';
 const TIME = 10000 // how often the members will be assigned to new channels (time in milliseconds)
+const CATEGORY_ID = '798244656974004226'
 
 let started = false; // a roulette has been started
 
@@ -14,7 +15,7 @@ bot.on('ready', () => {
 bot.login(config.token);
 
 bot.on('message', (msg) => {
-    
+
     let args = msg.content.substring(PREFIX.length).split(" ");
 
     // Prevent spam from bot
@@ -39,6 +40,10 @@ bot.on('message', (msg) => {
             startRoulette(msg);
             break;
 
+        case 'channels' :
+            getChannels(msg);
+            break;
+
         default :
             msg.channel.send(`"${args[0]}" is an invalid command.`);
 
@@ -52,10 +57,18 @@ function startRoulette(msg) {
     started = true;
 }
 
-// get all members in the server. Filter: ignore bots and members that aren't connected to a voice channel
+// get all members in the server. 
+// Filter: ignore bots and members that aren't connected to a voice channel.
 function getMembers(msg) {
     let members = msg.guild.members.filter(member => !member.user.bot && member.voiceChannel); 
     return members;
+}
+
+// get all the channels in the server.
+// Filter: only get channels in the category that has the channels you want members to be assigned to
+function getChannels(msg) {
+    let channels = msg.guild.channels.filter(channel => channel.parentID == CATEGORY_ID);
+    return channels;
 }
 
 function changeChannels(msg) {
