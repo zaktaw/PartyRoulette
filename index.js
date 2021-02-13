@@ -3,11 +3,11 @@ const config = require('./hiddenConfig.json');
 const utility = require('./utility.js');
 const bot = new Discord.Client();
 
-const PREFIX = 'pr ';
-const TIME = 10000 // how often the members will be assigned to new channels (time in milliseconds)
-const CATEGORY_ID = '798244656974004226'
+const PREFIX = config.prefix;
+const CATEGORY_ID = config.categoryID;
 
-let started = false; // a roulette has been started
+let time = config.defaultTime; // how often the members will be assigned to new channels (time in milliseconds).
+let started = false; // a roulette has been started.
 
 bot.on('ready', () => {
     console.log("Bot is online!");
@@ -54,7 +54,7 @@ bot.on('message', (msg) => {
 function startRoulette(msg) {
     if (started) return msg.channel.send("Party roulette has already been started. Stop the party roulette with command 'pr stop' before starting a new one.");
     executeRoulette(msg);
-    changeChannelsInterval = setInterval(() => executeRoulette(msg), TIME);
+    changeChannelsInterval = setInterval(() => executeRoulette(msg), time);
     started = true;
     msg.channel.send("Party roulette has been started.")
 }
