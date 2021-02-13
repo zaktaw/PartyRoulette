@@ -7,6 +7,9 @@ const PREFIX = config.prefix;
 const CATEGORY_ID = config.categoryID;
 
 let time = config.defaultTime; // how often the members will be assigned to new channels (time in milliseconds).
+let minGroupSize = 2; // the preferred minimum number of members that will be assigned to each channel. 
+let maxGroupSize = 4; // the preferred maximum number of members that will be assigned to each channel.
+let rouletteID = 0; // tracks how many roulettes that have been executed for logging purposes
 let started = false; // a roulette has been started.
 
 bot.on('ready', () => {
@@ -63,6 +66,7 @@ function stopRoulette(msg) {
     if (!started) return msg.channel.send("Party roulette has not been started. Start a roulette with command 'pr start'.");
     clearInterval(changeChannelsInterval); 
     started = false;
+    rouletteID = 0;
     msg.channel.send("Party roulette has been stopped.")
 }
 
@@ -105,7 +109,8 @@ function shuffleChannels(channels) {
 }
 
 function executeRoulette(msg) {
-    console.log("\nExecute roulette")
+    rouletteID++;
+    console.log("\nRoulette " + rouletteID + ":");
 
     members = getMembers(msg);
     channels = getChannels(msg);
@@ -113,16 +118,73 @@ function executeRoulette(msg) {
     channelsShuffled = shuffleChannels(channels);
 
     let channelCounter = 0;
+    let groupMemberCounter = 0;
+    let groupSize = utility.genRandNum(minGroupSize, maxGroupSize); 
+    let groups = [[channelsShuffled[channelCounter]]]; // 2D array of groups: first value in each array is always the voice channel for the group and the rest of values are the members
 
-    // assign members to channels
-    for (let member of membersShuffled) {
+    console.log("\Group " + (channelCounter+1) + ", size: " + groupSize);
+
+    // decide where to put members
+    for (let i=0; i<membersShuffled.length; i++) {
 
         let channel = channelsShuffled[channelCounter];
+        let member = membersShuffled[i];
 
-        console.log("Assigning member: " + member.displayName + " to channel: " + channel.name);
+        console.log("  Member: " + member.displayName + " => " + channel.name);
 
-        member.setVoiceChannel(channel.id)
-            .catch(err => console.log(err));
-        channelCounter++;
+        groups[channelCounter][groupMemberCounter+1] = member;
+        groupMemberCounter++;
+
+        // prepare a new group when a group has been filled
+        if (groupMemberCounter == groupSize) {
+            channelCounter++;
+            groups.push([channelsShuffled[channelCounter]]);
+            groupSize = utility.genRandNum(minGroupSize, maxGroupSize); 
+            groupMemberCounter = 0;
+            if (channelCounter == channelsShuffled.length) channelCounter = 0; // go back to the first channel if there aren't any left
+
+            console.log("Group " + (channelCounter+1) + ", size: " + groupSize);
+        }
+    }
+
+    /*
+    console.log("BEFORE")
+    for (let i=0; i<groups.length; i++) {
+        console.log("===")
+        for (let j=0; j<groups[i].length; j++) {
+            if (j == 0) console.log(groups[i][j].name);
+            else console.log(groups[i][j].displayName);
+        }
+    }
+    */
+
+    // check if the last group has too few members and if so move them to other groups
+    let lastGroup = groups[groups.length-1];
+    if (lastGroup.length-1 < minGroupSize) { // subtract 1 to not count the channel
+ 
+        while (lastGroup.length > 1) {
+            let member = lastGroup.pop(); // remove member from group
+            
+            // find the group with the fewest members to assign the members more evenly
+            let smallestGroup = groups[0]; 
+            for (let i=0; i<groups.length-1; i++) { // length-1 to not include the last group
+                if (groups[i].length < smallestGroup.length) smallestGroup = groups[i];
+            }
+
+            console.log('Correction: ' + member.displayName + ' => ' + smallestGroup[0].name);
+            smallestGroup.push(member); // add member to the smallest group
+        }
+
+        groups.pop(); // delete the last group
+    }
+
+    // Set voice channels
+    for (let i=0; i<groups.length; i++) {
+        for (let j=1; j<groups[i].length; j++) { // j=1 to only iterate through the members and not the channel
+            let member = groups[i][j];
+            let channel = groups[i][0];
+            member.setVoiceChannel(channel.id)
+                .catch(err => console.log(err));
+        }
     }
 }
