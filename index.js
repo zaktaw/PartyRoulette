@@ -28,6 +28,7 @@ bot.on('message', (msg) => {
     if (!msg.content.startsWith(PREFIX)) return; // bot will only reply if the message starts with the specified prefix
 
     // Only admins can use the bot
+    
     if (!msg.member.hasPermission('ADMINISTRATOR')) {
         msg.channel.send("You have to be an administrator to use this bot");
         return;
@@ -47,6 +48,19 @@ bot.on('message', (msg) => {
         case 'stop' :
             stopRoulette(msg);
             break;
+
+        case 'u' :
+            let mems = msg.guild.members.cache;
+            //console.log(mems);
+            //.filter(member => !member.user.bot && member.voiceChannel).array();
+            for (let [sf, m] of mems) console.log(m.user.username);
+            break;
+            /*
+            // Fetch a guild by its id
+    bot.guilds.fetch('798244656974004224')
+    .then(guild => console.log(guild.name))
+    .catch(console.error);
+    */
 
         default :
             msg.channel.send(`"${args[0]}" is an invalid command.`);
@@ -71,17 +85,17 @@ function stopRoulette(msg) {
 }
 
 // get all members in the server. 
-// Filter: ignore bots and members that aren't connected to a voice channel.
-function getMembers(msg) {
-    let members = msg.guild.members.filter(member => !member.user.bot && member.voiceChannel); 
-    return members.array();
+// Filter: ignore bots and only include users that are connected to a voice channel.
+function getUsers(msg) {
+    let members = msg.guild.members.cache.filter(member => !member.user.bot && member.voice.channel).array();
+    return members;
 }
 
 // get all the channels in the server.
 // Filter: only get voice channels in the specified category
 function getChannels(msg) {
-    let channels = msg.guild.channels.filter(channel => channel.parentID == CATEGORY_ID && channel.type == 'voice');
-    return channels.array();
+    let channels = msg.guild.channels.cache.filter(channel => channel.parentID == CATEGORY_ID && channel.type == 'voice').array();
+    return channels;
 }
 
 function shuffleMembers(members) {
@@ -112,7 +126,7 @@ function executeRoulette(msg) {
     rouletteID++;
     console.log("\nRoulette " + rouletteID + ":");
 
-    members = getMembers(msg);
+    members = getUsers(msg);
     channels = getChannels(msg);
     membersShuffled = shuffleMembers(members);
     channelsShuffled = shuffleChannels(channels);
@@ -173,7 +187,7 @@ function executeRoulette(msg) {
         for (let j=1; j<groups[i].length; j++) { // j=1 to only iterate through the members and not the channel
             let member = groups[i][j];
             let channel = groups[i][0];
-            member.setVoiceChannel(channel.id)
+            member.voice.setChannel(channel.id)
                 .catch(err => console.log(err));
         }
     }

@@ -20,6 +20,6 @@
   },
   "homepage": "https://github.com/zaktaw/PartyRoulette#readme",
   "dependencies": {
-    "discord.js": "^11.6.4"
+    "discord.js": "^12.5.1"
   }
 }
