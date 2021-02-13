@@ -3,6 +3,9 @@ const config = require('./hiddenConfig.json');
 
 const bot = new Discord.Client();
 const PREFIX = 'pr ';
+const TIME = 10000 // how often the members will be assigned to new channels (time in milliseconds)
+
+let started = false; // a roulette has been started
 
 bot.on('ready', () => {
     console.log("Bot is online!");
@@ -29,21 +32,29 @@ bot.on('message', (msg) => {
     switch (args[0].toLowerCase()) {
 
         case 'test' :
-            msg.channel.send("This bot is working");
+            msg.channel.send("This bot is working.");
             break;
 
         case 'start' :
-            changeChannelsInterval = setInterval(() => changeChannels(msg), 5000);
+            startRoulette(msg);
             break;
 
         default :
-            msg.channel.send(`"${args[0]}" is an invalid command`);
+            msg.channel.send(`"${args[0]}" is an invalid command.`);
 
     }   
 });
 
+function startRoulette(msg) {
+    if (started) return msg.channel.send("A roulette has already been started. Stop the current roulette with command 'pr stop' before starting a new one.");
+    changeChannels(msg);
+    changeChannelsInterval = setInterval(() => changeChannels(msg), TIME);
+    started = true;
+}
+
+// get all members in the server. Filter: ignore bots and members that aren't connected to a voice channel
 function getMembers(msg) {
-    let members = msg.guild.members.filter(member => !member.user.bot && member.voiceChannel); // get all members in the server. Filter: ignore bots and members that aren't connected to a voice channel
+    let members = msg.guild.members.filter(member => !member.user.bot && member.voiceChannel); 
     return members;
 }
 
