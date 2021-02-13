@@ -45,11 +45,6 @@ bot.on('message', (msg) => {
             stopRoulette(msg);
             break;
 
-        case 'm' :
-            let members = getMembers(msg);
-            shuffleMembers(members);
-            break;
-
         default :
             msg.channel.send(`"${args[0]}" is an invalid command.`);
 
@@ -58,8 +53,8 @@ bot.on('message', (msg) => {
 
 function startRoulette(msg) {
     if (started) return msg.channel.send("Party roulette has already been started. Stop the party roulette with command 'pr stop' before starting a new one.");
-    changeChannels(msg);
-    changeChannelsInterval = setInterval(() => changeChannels(msg), TIME);
+    executeRoulette(msg);
+    changeChannelsInterval = setInterval(() => executeRoulette(msg), TIME);
     started = true;
     msg.channel.send("Party roulette has been started.")
 }
@@ -79,10 +74,10 @@ function getMembers(msg) {
 }
 
 // get all the channels in the server.
-// Filter: only get channels in the category that has the channels you want members to be assigned to
+// Filter: only get voice channels in the specified category
 function getChannels(msg) {
-    let channels = msg.guild.channels.filter(channel => channel.parentID == CATEGORY_ID);
-    return channels;
+    let channels = msg.guild.channels.filter(channel => channel.parentID == CATEGORY_ID && channel.type == 'voice');
+    return channels.array();
 }
 
 function shuffleMembers(members) {
@@ -97,10 +92,37 @@ function shuffleMembers(members) {
     return membersShuffled;
 }
 
-function changeChannels(msg) {
-    console.log("Changing channels...")
+function shuffleChannels(channels) {
+    let channelsShuffled = [];
+
+    while (channels.length > 0) {
+        let randNum = utility.genRandNum(0,channels.length-1); // get a random channel from non-shuffled array
+        channelsShuffled.push(channels[randNum]); // add channel to the shuffled array
+        channels.splice(randNum, 1); // remove channel from non-shuffled array
+    }
+
+    return channelsShuffled;
+}
+
+function executeRoulette(msg) {
+    console.log("\nExecute roulette")
+
     members = getMembers(msg);
-    for (let member of members) {
-        member.setVoiceChannel('809803149266255902');
+    channels = getChannels(msg);
+    membersShuffled = shuffleMembers(members);
+    channelsShuffled = shuffleChannels(channels);
+
+    let channelCounter = 0;
+
+    // assign members to channels
+    for (let member of membersShuffled) {
+
+        let channel = channelsShuffled[channelCounter];
+
+        console.log("Assigning member: " + member.displayName + " to channel: " + channel.name);
+
+        member.setVoiceChannel(channel.id)
+            .catch(err => console.log(err));
+        channelCounter++;
     }
 }
