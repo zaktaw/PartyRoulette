@@ -40,6 +40,10 @@ bot.on('message', (msg) => {
             startRoulette(msg);
             break;
 
+        case 'stop' :
+            stopRoulette(msg);
+            break;
+
         case 'channels' :
             getChannels(msg);
             break;
@@ -51,10 +55,18 @@ bot.on('message', (msg) => {
 });
 
 function startRoulette(msg) {
-    if (started) return msg.channel.send("A roulette has already been started. Stop the current roulette with command 'pr stop' before starting a new one.");
+    if (started) return msg.channel.send("Party roulette has already been started. Stop the party roulette with command 'pr stop' before starting a new one.");
     changeChannels(msg);
     changeChannelsInterval = setInterval(() => changeChannels(msg), TIME);
     started = true;
+    msg.channel.send("Party roulette has been started.")
+}
+
+function stopRoulette(msg) {
+    if (!started) return msg.channel.send("Party roulette has not been started. Start a roulette with command 'pr start'.");
+    clearInterval(changeChannelsInterval); 
+    started = false;
+    msg.channel.send("Party roulette has been stopped.")
 }
 
 // get all members in the server. 
@@ -74,7 +86,7 @@ function getChannels(msg) {
 function changeChannels(msg) {
     console.log("Changing channels...")
     members = getMembers(msg);
-    for (let [snowflake, guildMember] of members) {
-        guildMember.setVoiceChannel('809803149266255902');
+    for (let [snowflake, member] of members) {
+        member.setVoiceChannel('809803149266255902');
     }
 }
