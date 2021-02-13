@@ -2,5 +2,7 @@
     "token": "TOKEN",
     "prefix": "pr ",
     "categoryID": "CATEGORY ID",
-    "defaultTime": 900000
+    "defaultTime": 900000,
+    "defaultMinGroupSize": 3,
+    "defaultMaxGroupSize": 5
 }

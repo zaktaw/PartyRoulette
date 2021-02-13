@@ -7,8 +7,8 @@ const PREFIX = config.prefix;
 const CATEGORY_ID = config.categoryID;
 
 let time = config.defaultTime; // how often the members will be assigned to new channels (time in milliseconds).
-let minGroupSize = 2; // the preferred minimum number of members that will be assigned to each channel. 
-let maxGroupSize = 4; // the preferred maximum number of members that will be assigned to each channel.
+let minGroupSize = config.defaultMinGroupSize; // the preferred minimum number of members that will be assigned to each channel. 
+let maxGroupSize = config.defaultMaxGroupSize; // the preferred maximum number of members that will be assigned to each channel.
 let rouletteID = 0; // tracks how many roulettes that have been executed for logging purposes
 let started = false; // a roulette has been started.
 
@@ -147,20 +147,10 @@ function executeRoulette(msg) {
         }
     }
 
-    /*
-    console.log("BEFORE")
-    for (let i=0; i<groups.length; i++) {
-        console.log("===")
-        for (let j=0; j<groups[i].length; j++) {
-            if (j == 0) console.log(groups[i][j].name);
-            else console.log(groups[i][j].displayName);
-        }
-    }
-    */
-
     // check if the last group has too few members and if so move them to other groups
+    // only do this if other groups exists
     let lastGroup = groups[groups.length-1];
-    if (lastGroup.length-1 < minGroupSize) { // subtract 1 to not count the channel
+    if (lastGroup.length-1 < minGroupSize && groups.length > 1) { // subtract 1 to not count the channel
  
         while (lastGroup.length > 1) {
             let member = lastGroup.pop(); // remove member from group
