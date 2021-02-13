@@ -1,5 +1,6 @@
 const Discord = require('discord.js');
 const config = require('./hiddenConfig.json');
+const utility = require('./utility.js');
 const bot = new Discord.Client();
 
 const PREFIX = 'pr ';
@@ -44,8 +45,9 @@ bot.on('message', (msg) => {
             stopRoulette(msg);
             break;
 
-        case 'channels' :
-            getChannels(msg);
+        case 'm' :
+            let members = getMembers(msg);
+            shuffleMembers(members);
             break;
 
         default :
@@ -73,7 +75,7 @@ function stopRoulette(msg) {
 // Filter: ignore bots and members that aren't connected to a voice channel.
 function getMembers(msg) {
     let members = msg.guild.members.filter(member => !member.user.bot && member.voiceChannel); 
-    return members;
+    return members.array();
 }
 
 // get all the channels in the server.
@@ -83,10 +85,22 @@ function getChannels(msg) {
     return channels;
 }
 
+function shuffleMembers(members) {
+    let membersShuffled = [];
+
+    while (members.length > 0) {
+        let randNum = utility.genRandNum(0,members.length-1); // get a random member from non-shuffled array
+        membersShuffled.push(members[randNum]); // add member to the shuffled array
+        members.splice(randNum, 1); // remove member from non-shuffled array
+    }
+
+    return membersShuffled;
+}
+
 function changeChannels(msg) {
     console.log("Changing channels...")
     members = getMembers(msg);
-    for (let [snowflake, member] of members) {
+    for (let member of members) {
         member.setVoiceChannel('809803149266255902');
     }
 }
