@@ -29,10 +29,6 @@ bot.on('message', (msg) => {
     // Handle arguments given
     switch (args[0].toLowerCase()) {
 
-        case 'test' :
-            msg.channel.send("This bot is working.");
-            break;
-
         case 'start' :
             roulette.startRoulette(msg);
             break;
