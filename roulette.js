@@ -5,8 +5,8 @@ const CATEGORY_ID = config.categoryID;
 let rouletteDuration = config.rouletteDuration; // how much time between the channels changing (time in milliseconds).
 let announcementTimeLong = config.announcementTimeLong; // announce to the members that the channels changing in x time long before channels are changing (time in milleseconds).
 let announcementTimeShort = config.announcementTimeShort; // announce to the members that the channels are changing in x time short before channels are changing (time in milleseconds).
-let minGroupSize = config.defaultMinGroupSize; // the preferred minimum number of members that will be assigned to each channel. 
-let maxGroupSize = config.defaultMaxGroupSize; // the preferred maximum number of members that will be assigned to each channel.
+let minGroupSize = config.minGroupSize; // the preferred minimum number of members that will be assigned to each channel. 
+let maxGroupSize = config.maxGroupSize; // the preferred maximum number of members that will be assigned to each channel.
 let rouletteID = 0; // tracks how many roulettes that have been executed for logging purposes.
 let started = false; // a roulette has been started.
 
@@ -173,7 +173,7 @@ function executeRoulette(msg) {
     let groups = makeGroups(membersShuffled, channelsShuffled);
     groups = makeCorrections(groups);
    
-    
+
     setVoiceChannels(groups);
 }
 

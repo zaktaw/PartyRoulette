@@ -3,8 +3,8 @@
     "prefix": "pr ",
     "categoryID": "CATEGORY ID",
     "rouletteDuration": 900000,
-    "defaultMinGroupSize": 3,
-    "defaultMaxGroupSize": 5,
+    "minGroupSize": 3,
+    "maxGroupSize": 5,
     "announcementTimeLong": 180000,
     "announcementTimeShort": 30000
 }
