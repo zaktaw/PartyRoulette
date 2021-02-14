@@ -63,23 +63,18 @@ function shuffleChannels(channels) {
     return channelsShuffled;
 }
 
-function executeRoulette(msg) {
-    rouletteID++;
-    console.log("\nRoulette " + rouletteID + ":");
-
-    members = getMembers(msg);
-    channels = getChannels(msg);
-    membersShuffled = shuffleMembers(members);
-    channelsShuffled = shuffleChannels(channels);
-
+/* Returns an array of arrays containing the groups.
+The first value in each array is the voice channel the group will be assigned to and the rest of the values are the members.
+Exampe: [ [voiceChannel1, member1, member2], [voiceChannel2, member3, member4, member5] ]
+*/
+function makeGroups() {
     let channelCounter = 0;
     let groupMemberCounter = 0;
-    let groupSize = utility.genRandNum(minGroupSize, maxGroupSize); 
-    let groups = [[channelsShuffled[channelCounter]]]; // 2D array of groups: first value in each array is always the voice channel for the group and the rest of values are the members
+    let groupSize = utility.genRandNum(minGroupSize, maxGroupSize);
+    let groups = [ [channelsShuffled[0]] ]; // initialize array with the first voice channel 
 
     console.log("\Group " + (channelCounter+1) + ", size: " + groupSize);
 
-    // decide where to put members
     for (let i=0; i<membersShuffled.length; i++) {
 
         let channel = channelsShuffled[channelCounter];
@@ -87,11 +82,11 @@ function executeRoulette(msg) {
 
         console.log("  Member: " + member.displayName + " => " + channel.name);
 
-        groups[channelCounter][groupMemberCounter+1] = member;
+        groups[channelCounter][groupMemberCounter+1] = member; // assign member to group. +1 becauce the first value is reserved for the voice channel.
         groupMemberCounter++;
 
-        // prepare a new group when a group has been filled
-        if (groupMemberCounter == groupSize) {
+        // prepare a new group when a group has been filled if there are more members to assign
+        if (groupMemberCounter == groupSize && i<membersShuffled.length-1) {
             channelCounter++;
             groups.push([channelsShuffled[channelCounter]]);
             groupSize = utility.genRandNum(minGroupSize, maxGroupSize); 
@@ -102,8 +97,12 @@ function executeRoulette(msg) {
         }
     }
 
-    // check if the last group has too few members and if so move them to other groups
-    // only do this if other groups exists
+    return groups;
+}
+
+// check if the last group has too few members and if so move them to other groups
+// only do this if other groups exists
+function makeCorrections(groups) {    
     let lastGroup = groups[groups.length-1];
     if (lastGroup.length-1 < minGroupSize && groups.length > 1) { // subtract 1 to not count the channel
  
@@ -123,15 +122,35 @@ function executeRoulette(msg) {
         groups.pop(); // delete the last group
     }
 
-    // Set voice channels
+    return groups;
+}
+
+function setVoiceChannels(groups) {
     for (let i=0; i<groups.length; i++) {
+
         for (let j=1; j<groups[i].length; j++) { // j=1 to only iterate through the members and not the channel
             let member = groups[i][j];
             let channel = groups[i][0];
             member.voice.setChannel(channel.id)
                 .catch(err => console.log(err));
         }
+
     }
+}
+
+function executeRoulette(msg) {
+    rouletteID++;
+    console.log("\nRoulette " + rouletteID + ":");
+
+    members = getMembers(msg);
+    channels = getChannels(msg);
+    membersShuffled = shuffleMembers(members);
+    channelsShuffled = shuffleChannels(channels);
+
+    let groups = makeGroups(membersShuffled, channelsShuffled);
+    groups = makeCorrections(groups);
+   
+    setVoiceChannels(groups);
 }
 
 module.exports = {

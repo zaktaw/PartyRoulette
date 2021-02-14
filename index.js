@@ -21,7 +21,6 @@ bot.on('message', (msg) => {
     if (!msg.content.startsWith(PREFIX)) return; // bot will only reply if the message starts with the specified prefix
 
     // Only admins can use the bot
-    
     if (!msg.member.hasPermission('ADMINISTRATOR')) {
         msg.channel.send("You have to be an administrator to use this bot");
         return;
