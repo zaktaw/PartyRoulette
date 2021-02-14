@@ -1,6 +1,6 @@
 # PartyRoulette
 
-<div style="text-align:center"><img src="./Resources/demo.gif" /></div>
+![](./Resources/demo.gif)
 
 PartyRoulette is a discord bot that enables members in a server to be assigned automatically to random voice channels in specified intervals. You can select how often members will be moved and how many members there should be in each voice channel. The bot can be used as a tool when hosting virtual parties on Discord to avoid crowded voice channels while still being able to interact with everyone at the party.
 
@@ -15,7 +15,9 @@ Requires Node and NPM to be installed.
 
 ## Setup
 
-PartyRoulette is a self hosted bot, so you need to create a new application on Discord Developer Portal (https://discord.com/developers/) to obtain a token for the bot. Once you have obtained a token go to the config.json file.
+PartyRoulette is a self hosted bot, so you need to create a new application on Discord Developer Portal (https://discord.com/developers/) to obtain a token for the bot. 
+
+### Edit config.json file
 
     config.json
 
@@ -43,6 +45,16 @@ PartyRoulette is a self hosted bot, so you need to create a new application on D
 6. maxGroupSize: the maximum number of members that will be assigned to each voice channel. Note that the bot will prioritise to satisy the minimum size, which means that there will be some cases where the maximum limit is exceeded.
 
 6. announcementTime: the bot sends two messages to everyone in the server when the channels are about to change. announcementTimeLong can be used to send an announcement long before changing channels and announcementTimeShort can be used to send an announcement shortly before changing. Time is given in milliseconds before channels are changing. Default time for long announcement is 180000 milliseconds = 3 minutes before channels are changing. Default time for short announcement is 30000 milliseconds = 30 seconds before changing channels. Note that the bot will output the time in minutes for long announcement and seconds for the short announcement.
+
+### Add bot to server
+
+To add the bot your server go to this site:
+
+    https://discordapi.com/permissions.html
+
+1. Choose to give the bot administrator permissions.  
+2. Copy your clinet ID from Discord Developer Portal into the client ID field and click on the generated link beneath it.
+3. Chose your server and authorize the bot.
 
 The bot is now ready to be used!
 
