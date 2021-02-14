@@ -41,11 +41,7 @@ bot.on('message', (msg) => {
             roulette.stopRoulette(msg);
             break;
 
-        case 'u' :
-            
-
         default :
             msg.channel.send(`"${args[0]}" is an invalid command.`);
-
     }   
 });

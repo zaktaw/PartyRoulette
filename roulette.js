@@ -2,17 +2,18 @@ const utility = require('./utility.js');
 const config = require('./hiddenConfig.json');
 
 const CATEGORY_ID = config.categoryID;
-let time = config.defaultTime; // how often the members will be assigned to new channels (time in milliseconds).
+let rouletteDuration = config.rouletteDuration; // how much time between the channels changing (time in milliseconds).
+let announcementTimeLong = config.announcementTimeLong; // announce to the members that the channels changing in x time long before channels are changing (time in milleseconds).
+let announcementTimeShort = config.announcementTimeShort; // announce to the members that the channels are changing in x time short before channels are changing (time in milleseconds).
 let minGroupSize = config.defaultMinGroupSize; // the preferred minimum number of members that will be assigned to each channel. 
 let maxGroupSize = config.defaultMaxGroupSize; // the preferred maximum number of members that will be assigned to each channel.
-let rouletteID = 0; // tracks how many roulettes that have been executed for logging purposes
+let rouletteID = 0; // tracks how many roulettes that have been executed for logging purposes.
 let started = false; // a roulette has been started.
-
 
 function startRoulette(msg) {
     if (started) return msg.channel.send("Party roulette has already been started. Stop the party roulette with command 'pr stop' before starting a new one.");
     executeRoulette(msg);
-    changeChannelsInterval = setInterval(() => executeRoulette(msg), time);
+    changeChannelsInterval = setInterval(() => executeRoulette(msg), rouletteDuration);
     started = true;
     msg.channel.send("Party roulette has been started.")
 }
@@ -138,7 +139,29 @@ function setVoiceChannels(groups) {
     }
 }
 
+// Send an announcemnet to the members of the server that the channels are about to change in long time.
+function announceChangingChannelsLong(msg) {
+    let time = rouletteDuration - announcementTimeLong; // how long before sending announcement.
+    let timeInMinutes = announcementTimeLong/1000/60;
+    setTimeout( () => {
+        msg.channel.send("@everyone Channels are changing in " + timeInMinutes  + (timeInMinutes>1?" minutes":" minute") + "!"); //@everyone is used to tag everyone in the server.
+    }, time);
+}
+
+// Send an announcemnet to the members of the server that the channels are about to change in short time.
+function announceChangingChannelsShort(msg) {
+    let time = rouletteDuration - announcementTimeShort; // how long before sending announcement.
+    let timeInSeconds = announcementTimeShort/1000;
+    setTimeout( () => {
+        msg.channel.send("@everyone Channels are changing in " + timeInSeconds  + " seconds!"); //@everyone is used to tag everyone in the server.
+    }, time);
+}
+
 function executeRoulette(msg) {
+
+    announceChangingChannelsLong(msg);
+    announceChangingChannelsShort(msg);
+
     rouletteID++;
     console.log("\nRoulette " + rouletteID + ":");
 
@@ -150,6 +173,7 @@ function executeRoulette(msg) {
     let groups = makeGroups(membersShuffled, channelsShuffled);
     groups = makeCorrections(groups);
    
+    
     setVoiceChannels(groups);
 }
 

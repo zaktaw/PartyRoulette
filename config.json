@@ -2,7 +2,9 @@
     "token": "TOKEN",
     "prefix": "pr ",
     "categoryID": "CATEGORY ID",
-    "defaultTime": 900000,
+    "rouletteDuration": 900000,
     "defaultMinGroupSize": 3,
-    "defaultMaxGroupSize": 5
+    "defaultMaxGroupSize": 5,
+    "announcementTimeLong": 180000,
+    "announcementTimeShort": 30000
 }
