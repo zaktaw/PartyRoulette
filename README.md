@@ -44,7 +44,7 @@ PartyRoulette is a self hosted bot, so you need to create a new application on D
 
 6. maxGroupSize: the maximum number of members that will be assigned to each voice channel. Note that the bot will prioritise to satisy the minimum size, which means that there will be some cases where the maximum limit is exceeded.
 
-6. announcementTime: the bot sends two messages to everyone in the server when the channels are about to change. announcementTimeLong can be used to send an announcement long before changing channels and announcementTimeShort can be used to send an announcement shortly before changing. Time is given in milliseconds before channels are changing. Default time for long announcement is 180000 milliseconds = 3 minutes before channels are changing. Default time for short announcement is 30000 milliseconds = 30 seconds before changing channels. Note that the bot will output the time in minutes for long announcement and seconds for the short announcement.
+6. announcementTime: the bot sends two messages to everyone in the server when the channels are about to change. announcementTimeLong can be used to send an announcement long before changing channels and announcementTimeShort can be used to send an announcement shortly before changing. Time is given in milliseconds before channels are changing. Default time for long announcement is 180000 milliseconds = 3 minutes before channels are changing. Default time for short announcement is 30000 milliseconds = 30 seconds before changing channels. Note that the bot will output the time in minutes for long announcement and seconds for the short announcement. The announcments are disabled if time is set to 0.
 
 ### Add bot to server
 

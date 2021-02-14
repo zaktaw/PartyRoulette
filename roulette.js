@@ -3,8 +3,8 @@ const config = require('./hiddenConfig.json');
 
 const CATEGORY_ID = config.categoryID;
 let rouletteDuration = config.rouletteDuration; // how much time between the channels changing (time in milliseconds).
-let announcementTimeLong = config.announcementTimeLong; // announce to the members that the channels changing in x time long before channels are changing (time in milleseconds).
-let announcementTimeShort = config.announcementTimeShort; // announce to the members that the channels are changing in x time short before channels are changing (time in milleseconds).
+let announcementTimeLong = config.announcementTimeLong; // announce to the members that the channels changing in x time long before channels are changing (time in milleseconds). Disabled if time=0.
+let announcementTimeShort = config.announcementTimeShort; // announce to the members that the channels are changing in x time short before channels are changing (time in milleseconds). Disabled if time=0.
 let minGroupSize = config.minGroupSize; // the preferred minimum number of members that will be assigned to each channel. 
 let maxGroupSize = config.maxGroupSize; // the preferred maximum number of members that will be assigned to each channel.
 let rouletteID = 0; // tracks how many roulettes that have been executed for logging purposes.
@@ -159,8 +159,8 @@ function announceChangingChannelsShort(msg) {
 
 function executeRoulette(msg) {
 
-    announceChangingChannelsLong(msg);
-    announceChangingChannelsShort(msg);
+    if (announcementTimeLong > 0) announceChangingChannelsLong(msg);
+    if (announcementTimeShort > 0) announceChangingChannelsShort(msg);
 
     rouletteID++;
     console.log("\nRoulette " + rouletteID + ":");
