@@ -1,5 +1,5 @@
 const utility = require('./utility.js');
-const config = require('./hiddenConfig.json');
+const config = require('./config.json');
 
 const CATEGORY_ID = config.categoryID;
 let rouletteDuration = config.rouletteDuration; // how much time between the channels changing (time in milliseconds).

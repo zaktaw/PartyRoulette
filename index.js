@@ -1,5 +1,5 @@
 const Discord = require('discord.js');
-const config = require('./hiddenConfig.json');
+const config = require('./config.json');
 const roulette = require('./roulette.js');
 const bot = new Discord.Client();
 
