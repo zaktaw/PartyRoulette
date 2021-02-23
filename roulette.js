@@ -144,7 +144,8 @@ function announceChangingChannelsLong(msg) {
     let time = rouletteDuration - announcementTimeLong; // how long before sending announcement.
     let timeInMinutes = announcementTimeLong/1000/60;
     setTimeout( () => {
-        msg.channel.send("@everyone Channels are changing in " + timeInMinutes  + (timeInMinutes>1?" minutes":" minute") + "!"); //@everyone is used to tag everyone in the server.
+        msg.channel.send("@everyone Channels are changing in " + timeInMinutes  + (timeInMinutes>1?" minutes":" minute") + "!") //@everyone is used to tag everyone in the server.
+            .then(message => message.delete({ timeout: 5000 })); // delete message after 5 seconds
     }, time);
 }
 
@@ -153,7 +154,8 @@ function announceChangingChannelsShort(msg) {
     let time = rouletteDuration - announcementTimeShort; // how long before sending announcement.
     let timeInSeconds = announcementTimeShort/1000;
     setTimeout( () => {
-        msg.channel.send("@everyone Channels are changing in " + timeInSeconds  + " seconds!"); //@everyone is used to tag everyone in the server.
+        msg.channel.send("@everyone Channels are changing in " + timeInSeconds  + " seconds!") //@everyone is used to tag everyone in the server.
+            .then(message => message.delete({ timeout: 5000 })); // delete message after 5 seconds
     }, time);
 }
 
