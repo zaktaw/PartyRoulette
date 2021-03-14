@@ -179,6 +179,19 @@ function executeRoulette(msg) {
     setVoiceChannels(groups);
 }
 
+//Generate the optimal amount of groups based on participants
+function genOptimalGroups(participants, minGroupSize, maxGroupSize) {
+	let N = Number(participants);
+	let O = 0;
+	let minGroups = Math.ceil(N/Number(maxGroupSize))
+	let maxGroups = Math.floor(N/Number(minGroupSize))
+	let d = maxGroups - minGroups
+	
+	O = minGroups + Math.ceil(d/2)
+	
+	return O;
+}
+
 module.exports = {
     startRoulette,
     stopRoulette,
