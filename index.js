@@ -9,7 +9,7 @@ bot.on('ready', () => {
     console.log("Bot is online!");
 }); 
 
-bot.login(config.token);
+bot.login(process.env.PARTY_ROULETTE_TOKEN);
 
 bot.on('message', (msg) => {
 
