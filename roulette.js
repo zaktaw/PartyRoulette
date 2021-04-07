@@ -180,16 +180,19 @@ function executeRoulette(msg) {
 }
 
 //Generate the optimal amount of groups based on participants
+function genOptimalGroups(participants) {
+	let minGroups = Math.ceil(participants/maxGroupSize)
+	let maxGroups = Math.floor(participants/minGroupSize)
+	let difference = maxGroups - minGroups
+	
+	let optimalGroups = minGroups + Math.ceil(difference/2)
+	
+	return optimalGroups;
+}
+
+//Generate the optimal amount of groups based on participants
 function genOptimalGroups(participants, minGroupSize, maxGroupSize) {
-	let N = Number(participants);
-	let O = 0;
-	let minGroups = Math.ceil(N/Number(maxGroupSize))
-	let maxGroups = Math.floor(N/Number(minGroupSize))
-	let d = maxGroups - minGroups
 	
-	O = minGroups + Math.ceil(d/2)
-	
-	return O;
 }
 
 module.exports = {
