@@ -1,18 +1,12 @@
 const utility = require('../utility.js')
 const roulette = require('../roulette.js')
 
-let numberOfParticipants = 7 // number of participants in the event
-let numberOfChannels = 100 // number of available channels in the server
+let numberOfParticipants = 100 // number of participants in the event
+let numberOfChannels = 30 // number of available channels in the server
 let minGroupSize = 3 // the minimum number of people that can be in a group
 let maxGroupSize = 5 // the maximum number of people that can be in a group
 
-let participants = genParticipants(numberOfParticipants)
-let channels = genChannels(numberOfChannels)
-let participantsShuffled = shuffleParticipants(participants)
-let channelsShuffled = shuffleChannels(channels)
-let numberOfGroups = genOptimalGroups(participantsShuffled.length, minGroupSize, maxGroupSize);
-let groups = makeGroups(numberOfGroups, participantsShuffled, channelsShuffled);
-displayGroups(groups)
+executeRoulette();
 
 // generate test participants
 function genParticipants(numberOfParticipants) {
@@ -38,42 +32,6 @@ function genChannels(numberOfChannels) {
 	}		
 
 	return channels
-}
-
-// function shuffleChannels(channels) {
-//     let channelsShuffled = [];
-
-//     while (channels.length > 0) {
-//         let randNum = utility.genRandNum(0,channels.length-1); // get a random channel from non-shuffled array
-//         channelsShuffled.push(channels[randNum]); // add channel to the shuffled array
-//         channels.splice(randNum, 1); // remove channel from non-shuffled array
-//     }
-
-//     return channelsShuffled;
-// }
-
-// function shuffleParticipants(members) {
-//     let membersShuffled = [];
-
-//     while (members.length > 0) {
-//         let randNum = utility.genRandNum(0,members.length-1); // get a random member from non-shuffled array
-//         membersShuffled.push(members[randNum]); // add member to the shuffled array
-//         members.splice(randNum, 1); // remove member from non-shuffled array
-//     }
-
-//     return membersShuffled;
-// }
-
-//Generate the optimal amount of groups based on participants
-function genOptimalGroups(participants, minGroupSize, maxGroupSize) {
-	let minGroups = Math.ceil(participants/maxGroupSize)
-	let maxGroups = Math.floor(participants/minGroupSize)
-	let difference = maxGroups - minGroups
-	
-	let optimalGroups = minGroups + Math.ceil(difference/2)
-	
-	console.log("Number of groups: " + optimalGroups)
-	return optimalGroups;
 }
 
 function makeGroups(numberOfGroups, participants, channels) {
@@ -110,9 +68,33 @@ function makeGroups(numberOfGroups, participants, channels) {
 	return groups;
 }
 
-function displayGroups(groups) {
-	groups.forEach(group => {
-		group.forEach(item => console.log(item))
-		console.log("")
-	})
+function executeRoulette(msg) {
+
+    // rouletteID++;
+    // console.log("\nRoulette " + rouletteID + ":");
+
+    let members = genParticipants(numberOfParticipants);
+    let channels = genChannels(numberOfChannels);
+    let membersShuffled = roulette.shuffleMembers(members);
+    let channelsShuffled = roulette.shuffleChannels(channels);
+    let numberOfGroups = roulette.genOptimalGroups(membersShuffled.length)
+
+    let groups = makeGroups(numberOfGroups, membersShuffled, channelsShuffled);
+    // groups = makeCorrections(groups);
+   
+
+    setVoiceChannels(groups);
+}
+
+function setVoiceChannels(groups) {
+    for (let i=0; i<groups.length; i++) {
+        let channel = groups[i][0];
+        console.log(`\nGroup: ${channel}`)
+        for (let j=1; j<groups[i].length; j++) { // j=1 to only iterate through the members and not the channel
+            let member = groups[i][j];
+            console.log(`Member: ${member}`)
+            // member.voice.setChannel(channel.id)
+        }
+
+    }
 }

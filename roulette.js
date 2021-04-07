@@ -68,7 +68,7 @@ function shuffleChannels(channels) {
 The first value in each array is the voice channel the group will be assigned to and the rest of the values are the members.
 Exampe: [ [voiceChannel1, member1, member2], [voiceChannel2, member3, member4, member5] ]
 */
-function makeGroups() {
+function makeGroups(membersShuffled, channelsShuffled) {
     let channelCounter = 0;
     let groupMemberCounter = 0;
     let groupSize = utility.genRandNum(minGroupSize, maxGroupSize);
@@ -167,10 +167,10 @@ function executeRoulette(msg) {
     rouletteID++;
     console.log("\nRoulette " + rouletteID + ":");
 
-    members = getMembers(msg);
-    channels = getChannels(msg);
-    membersShuffled = shuffleMembers(members);
-    channelsShuffled = shuffleChannels(channels);
+    let members = getMembers(msg);
+    let channels = getChannels(msg);
+    let membersShuffled = shuffleMembers(members);
+    let channelsShuffled = shuffleChannels(channels);
 
     let groups = makeGroups(membersShuffled, channelsShuffled);
     groups = makeCorrections(groups);
@@ -180,19 +180,14 @@ function executeRoulette(msg) {
 }
 
 //Generate the optimal amount of groups based on participants
-function genOptimalGroups(participants) {
-	let minGroups = Math.ceil(participants/maxGroupSize)
-	let maxGroups = Math.floor(participants/minGroupSize)
+function genOptimalGroups(numberOfparticipants) {
+	let minGroups = Math.ceil(numberOfparticipants/maxGroupSize)
+	let maxGroups = Math.floor(numberOfparticipants/minGroupSize)
 	let difference = maxGroups - minGroups
 	
 	let optimalGroups = minGroups + Math.ceil(difference/2)
 	
 	return optimalGroups;
-}
-
-//Generate the optimal amount of groups based on participants
-function genOptimalGroups(participants, minGroupSize, maxGroupSize) {
-	
 }
 
 module.exports = {
@@ -202,5 +197,6 @@ module.exports = {
     getChannels,
     shuffleMembers,
     shuffleChannels,
-    executeRoulette
+    executeRoulette,
+    genOptimalGroups
 }
